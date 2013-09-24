@@ -170,7 +170,7 @@ let s:newline = {}        " dict with newline character of each buffer
 
 " Commands to execute to get current file contents in various rcs systems
 
-let s:rcs_cmd_g4  = "p4 print '%s'"
+let s:rcs_cmd_g4  = "g4 print '%s'"
 
 "
 " Do the diff and update signs.
@@ -335,6 +335,10 @@ function Svndiff(...)
 		echom "Buffer has no file name, can not do a diff"
 		return
 	endif
+        
+        if cmd == 'update'
+           let ok = s:Svndiff_update()
+        endif
 
 	if cmd == 'clear'
 		let s:changedtick[fname] = 0
