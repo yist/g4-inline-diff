@@ -170,12 +170,7 @@ let s:newline = {}        " dict with newline character of each buffer
 
 " Commands to execute to get current file contents in various rcs systems
 
-let s:rcs_cmd_svn = "svn cat '%s'"
-let s:rcs_cmd_git = "git cat-file -p HEAD:$(git ls-files --full-name '%s')"
-let s:rcs_cmd_hg  = "hg cat '%s'"
-let s:rcs_cmd_cvs = "cvs -q update -p '%s'"
-let s:rcs_cmd_p4  = "p4 print '%s'"
-let s:rcs_cmd_fossil = "fossil finfo -p '%s'"
+let s:rcs_cmd_g4  = "p4 print '%s'"
 
 "
 " Do the diff and update signs.
@@ -189,63 +184,11 @@ function s:Svndiff_update(...)
 		return 0
 	end
 
-	" Guess RCS type for this file
-	
-	if ! has_key(s:rcs_type, fname) 
-
-		" skip new files created in vim buffer
-		
-		if ! filereadable(fname)
-			return 0
-		end
-			
-		let info = system("LANG=C svn info " . fname)
-		if match(info, "Path") != -1
-			let s:rcs_type[fname] = "svn"
-			let s:rcs_cmd[fname] = s:rcs_cmd_svn
-		end
-
-		let info = system("git status " . fname)
-		if v:shell_error == 0
-			let s:rcs_type[fname] = "git"
-			let s:rcs_cmd[fname] = s:rcs_cmd_git
-		end
-
-		let info = system("fossil status " . fname)
-		if v:shell_error == 0
-			let s:rcs_type[fname] = "fossil"
-			let s:rcs_cmd[fname] = s:rcs_cmd_fossil
-		end
-
-		let info = system("cvs st " . fname)
-		if v:shell_error == 0
-			let s:rcs_type[fname] = "cvs"
-			let s:rcs_cmd[fname] = s:rcs_cmd_cvs
-		end
-
-		let info = system("hg status " . fname)
-		if v:shell_error == 0
-			let s:rcs_type[fname] = "hg"
-			let s:rcs_cmd[fname] = s:rcs_cmd_hg
-		end
-
-		let info = system("p4 fstat " . fname)
-		if match(info, "depotFile") != -1
-			let s:rcs_type[fname] = "p4"
-			let s:rcs_cmd[fname] = s:rcs_cmd_p4
-		end
-	end
-
-	" Could not detect RCS type, print message and exit
-	
-	if ! has_key(s:rcs_type, fname) 
-		echom "Svndiff: Warning, file " . fname . " is not managed by a supported versioning system!"
-		unlet s:is_active[fname]
-		return
-	end
+	" Set RCS type for this file
+	let s:rcs_type[fname] = "g4"
+	let s:rcs_cmd[fname] = s:rcs_cmd_g4
 
 	" Find newline characters for the current file
-	
 	if ! has_key(s:newline, fname) 
 		let l:ff_to_newline = { "dos": "\r\n", "unix": "\n", "mac": "\r" }
 		let s:newline[fname] = l:ff_to_newline[&l:fileformat]
@@ -276,7 +219,7 @@ function s:Svndiff_update(...)
 
 	for line in split(diff, '\n')
 		
-    let part = matchlist(line, '@@ -\([0-9]*\),*\([0-9]*\) +\([0-9]*\),*\([0-9]*\) @@')
+                let part = matchlist(line, '@@ -\([0-9]*\),*\([0-9]*\) +\([0-9]*\),*\([0-9]*\) @@')
 
 		if ! empty(part)
 			let old_from  = part[1]
