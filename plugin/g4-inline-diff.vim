@@ -347,7 +347,7 @@ function Svndiff(...)
 			unlet s:is_active[fname]
 		endif
 		call s:Svndiff_clear()
-	end
+	endif
 	
 	if cmd == 'prev'
 		let s:is_active[fname] = 1
