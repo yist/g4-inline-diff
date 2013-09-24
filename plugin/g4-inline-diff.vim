@@ -337,6 +337,7 @@ function Svndiff(...)
 	endif
         
         if cmd == 'update'
+           let s:is_active[fname] = 1
            let ok = s:Svndiff_update()
         endif
 
