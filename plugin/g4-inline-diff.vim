@@ -390,7 +390,7 @@ function ToggleG4InlineDiff()
   if s:g4inlinediff_status == 0
       call s:Svndiff_update()
   endif
-  if s:g4inlinediff_status == 0
+  if s:g4inlinediff_status == 1
       call s:Svndiff_clear()
   endif
 endfunction
