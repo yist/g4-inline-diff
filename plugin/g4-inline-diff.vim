@@ -185,8 +185,24 @@ function s:Svndiff_update(...)
 	end
 
 	" Set RCS type for this file
-	let s:rcs_type[fname] = "g4"
-	let s:rcs_cmd[fname] = s:rcs_cmd_g4
+	if ! filereadable(fname)
+            return 0
+        end
+        
+        if ! has_key(s:rcs_type, fname) 
+
+		" skip new files created in vim buffer
+
+		if ! filereadable(fname)
+			return 0
+		end
+
+		let info = system("g4 fstat " . fname)
+		if match(info, "depotFile") != -1
+			let s:rcs_type[fname] = "g4"
+			let s:rcs_cmd[fname] = s:rcs_cmd_g4
+		end
+	end
 
 	" Find newline characters for the current file
 	if ! has_key(s:newline, fname) 
@@ -339,7 +355,7 @@ function Svndiff(...)
         if cmd == 'update'
            let s:is_active[fname] = 1
            let ok = s:Svndiff_update()
-        endif
+        end
 
 	if cmd == 'clear'
 		let s:changedtick[fname] = 0
@@ -347,7 +363,7 @@ function Svndiff(...)
 			unlet s:is_active[fname]
 		endif
 		call s:Svndiff_clear()
-	endif
+	end
 	
 	if cmd == 'prev'
 		let s:is_active[fname] = 1
@@ -355,7 +371,7 @@ function Svndiff(...)
 		if ok
 			call s:Svndiff_prev()
 		endif
-	endif
+	end
 
 	if cmd == 'next'
 		let s:is_active[fname] = 1
@@ -363,7 +379,7 @@ function Svndiff(...)
 		if ok
 			call s:Svndiff_next()
 		endif
-	endif
+	end
 
 endfunction
 
