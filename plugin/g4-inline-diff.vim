@@ -167,6 +167,7 @@ let s:diff_signs = {}     " dict with list of ids of all signs, per file
 let s:diff_blocks = {}    " dict with list of ids of first line of each diff block, per file
 let s:changedtick = {}    " dict with changedticks of each buffer since last invocation
 let s:newline = {}        " dict with newline character of each buffer
+let s:g4inlinediff_status = 0
 
 " Commands to execute to get current file contents in various rcs systems
 
@@ -281,6 +282,7 @@ function s:Svndiff_update(...)
 		endif
 	endfor
 
+        let s:g4inlinediff_status = 1
 endfunction
 
 
@@ -298,6 +300,7 @@ function s:Svndiff_clear(...)
 	end
 	let s:diff_blocks[fname] = []
 	let s:diff_signs[fname] = []
+	let s:g4inlinediff_status = 0
 endfunction
 
 
@@ -381,6 +384,15 @@ function Svndiff(...)
 		endif
 	end
 
+endfunction
+
+function ToggleG4InlineDiff()
+  if s:g4inlinediff_status == 0
+      call s:Svndidff_update()
+  endif
+  if s:g4inlinediff_status == 0
+      call s:Svndiff_clear()
+  endif
 endfunction
 
 
