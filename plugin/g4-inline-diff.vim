@@ -178,7 +178,7 @@ let s:rcs_cmd_g4  = "g4 print '%s'"
 " Do the diff and update signs.
 "
 
-function s:Svndiff_update(...)
+function! s:Svndiff_update(...)
 
 	let fname = bufname("%")
 
@@ -292,7 +292,7 @@ endfunction
 " Remove all signs we placed earlier 
 "
 
-function s:Svndiff_clear(...)
+function! s:Svndiff_clear(...)
 	let fname = bufname("%")
 	if exists("s:diff_signs[fname]") 
 		for id in s:diff_signs[fname]
@@ -309,7 +309,7 @@ endfunction
 " Jump to previous diff block sign above the current line
 "
 
-function s:Svndiff_prev(...)
+function! s:Svndiff_prev(...)
 	let fname = bufname("%")
 	let diff_blocks_reversed = reverse(copy(s:diff_blocks[fname]))
 	for block in diff_blocks_reversed
@@ -328,7 +328,7 @@ endfunction
 " Jump to next diff block sign below the current line
 "
 
-function s:Svndiff_next(...)
+function! s:Svndiff_next(...)
 	let fname = bufname("%")
 	for block in s:diff_blocks[fname]
 		let line = block.id - s:sign_base
@@ -347,7 +347,7 @@ endfunction
 " {next|prev|clear}
 "
 
-function Svndiff(...)
+function! Svndiff(...)
 
 	let cmd = exists("a:1") ? a:1 : ''
 	let fname = bufname("%")
@@ -387,7 +387,7 @@ function Svndiff(...)
 
 endfunction
 
-function ToggleG4InlineDiff()
+function! ToggleG4InlineDiff()
   if g:g4inlinediff_status == 0
       call Svndiff("update")
   else
